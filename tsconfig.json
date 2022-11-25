@@ -6,7 +6,8 @@
       "dom",
       "es2019"
     ],
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src"
