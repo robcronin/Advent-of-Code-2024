@@ -55,5 +55,6 @@ const input = '';
 
 export const data = parseInput(input) as number[];" >> src/day$1/day$1.data.ts
 
+code src/day$1/day$1.ts src/day$1/day$1.data.ts src/day$1/day$1.test.ts
 yarn test day$1
 exit
