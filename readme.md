@@ -1,4 +1,4 @@
-# 🎄 Advent of Code 2021 - Typescript 🎄
+# 🎄 Advent of Code 202x - Typescript 🎄
 
 Attempt at [Advent Of Code 202x](https://adventofcode.com/202x) written in Typescript with the following aims:
 
