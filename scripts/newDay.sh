@@ -22,7 +22,7 @@ import { data } from './day$1.data';
 const testString = '';
 const testData = parseInput(testString);
 
-describe('day $1', () => {
+describe.only('day $1', () => {
   it.only('test cases', () => {
     console.log(testData)
     expect(day$1(testData)).toBe($1);
