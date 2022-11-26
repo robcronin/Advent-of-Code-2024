@@ -96,7 +96,9 @@ export const printGrid = <ValueType>(gridInfo: GridInfo<ValueType>): string => {
   return range(numRows).reduce(
     (printValue, x) =>
       printValue +
-      range(numCols).reduce((row, y) => row + grid[x][y] + ' ', '') +
+      range(numCols)
+        .reduce((row, y) => row + grid[x][y] + ' ', '')
+        .slice(0, -1) +
       '\n',
     '',
   );
@@ -109,7 +111,9 @@ export const reversePrintGrid = <ValueType>(
   return range(numCols).reduce(
     (printValue, y) =>
       printValue +
-      range(numRows).reduce((row, x) => row + grid[x][y] + ' ', '') +
+      range(numRows)
+        .reduce((row, x) => row + grid[x][y] + ' ', '')
+        .slice(0, -1) +
       '\n',
     '',
   );
