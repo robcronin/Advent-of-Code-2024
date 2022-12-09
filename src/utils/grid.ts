@@ -8,6 +8,13 @@ export type GridInfo<ValueType> = {
 };
 export type Coords = { x: number; y: number };
 
+export const directions = [
+  [0, 1],
+  [1, 0],
+  [0, -1],
+  [-1, 0],
+];
+
 export const genNewGrid = <ValueType>({
   numRows,
   numCols,
@@ -133,4 +140,13 @@ export const countValueInGrid = <ValueType>(
       ),
     0,
   );
+};
+
+export const isCoordValid = <ValueType>(
+  coords: Coords,
+  gridInfo: GridInfo<ValueType>,
+) => {
+  const { x, y } = coords;
+  const { numRows, numCols } = gridInfo;
+  return x >= 0 && x < numRows && y >= 0 && y < numCols;
 };
