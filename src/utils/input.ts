@@ -23,7 +23,7 @@ export const parseLines = (input: string, delimiter?: string) => {
   return inputArray.map((element) => element.trim());
 };
 
-export const parseInput = (input: string) => {
-  const parsed = parseLines(input);
+export const parseInput = (input: string, delimiter?: string) => {
+  const parsed = parseLines(input, delimiter);
   return mapToNumberIfNecessary(parsed);
 };
