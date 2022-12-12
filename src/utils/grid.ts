@@ -150,3 +150,16 @@ export const isCoordValid = <ValueType>(
   const { numRows, numCols } = gridInfo;
   return x >= 0 && x < numRows && y >= 0 && y < numCols;
 };
+
+export const findValueInGrid = <ValueType>(
+  gridInfo: GridInfo<ValueType>,
+  value: ValueType,
+): Coords[] => {
+  const { numRows, numCols, grid } = gridInfo;
+  const coords: Coords[] = [];
+  range(numRows).forEach((x) => {
+    const yIndex = range(numCols).findIndex((y) => grid[x][y] === value);
+    if (yIndex !== -1) coords.push({ x, y: yIndex });
+  });
+  return coords;
+};
