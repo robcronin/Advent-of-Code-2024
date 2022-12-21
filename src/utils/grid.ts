@@ -1,3 +1,9 @@
+/*
+  Note: The x and y coordinates are backwards from convention
+      x is the rowNumber
+      y is the colNumber
+*/
+
 import { range } from './looping';
 
 export type Grid<ValueType> = ValueType[][];
@@ -7,6 +13,13 @@ export type GridInfo<ValueType> = {
   numCols: number;
 };
 export type Coords = { x: number; y: number };
+
+export const directions = [
+  [0, 1],
+  [1, 0],
+  [0, -1],
+  [-1, 0],
+];
 
 export const genNewGrid = <ValueType>({
   numRows,
@@ -133,4 +146,26 @@ export const countValueInGrid = <ValueType>(
       ),
     0,
   );
+};
+
+export const isCoordValid = <ValueType>(
+  coords: Coords,
+  gridInfo: GridInfo<ValueType>,
+) => {
+  const { x, y } = coords;
+  const { numRows, numCols } = gridInfo;
+  return x >= 0 && x < numRows && y >= 0 && y < numCols;
+};
+
+export const findValueInGrid = <ValueType>(
+  gridInfo: GridInfo<ValueType>,
+  value: ValueType,
+): Coords[] => {
+  const { numRows, numCols, grid } = gridInfo;
+  const coords: Coords[] = [];
+  range(numRows).forEach((x) => {
+    const yIndex = range(numCols).findIndex((y) => grid[x][y] === value);
+    if (yIndex !== -1) coords.push({ x, y: yIndex });
+  });
+  return coords;
 };
