@@ -2,6 +2,7 @@
   Note: The x and y coordinates are backwards from convention
       x is the rowNumber
       y is the colNumber
+  This usually matches how the AoC puzzles are defined
 */
 
 import { range } from './looping';
