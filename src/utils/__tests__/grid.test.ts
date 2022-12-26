@@ -6,7 +6,7 @@ import {
   isCoordValid,
   printGrid,
   reversePrintGrid,
-  runFnOnGrid
+  runFnOnGrid,
 } from '../grid';
 
 describe('genNewGrid', () => {

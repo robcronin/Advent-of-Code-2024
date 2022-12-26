@@ -1,4 +1,7 @@
 const getDelimiter = (input: string) => {
+  if (input.includes('\n\n')) {
+    return '\n\n';
+  }
   if (input.includes('\n')) {
     return '\n';
   }
