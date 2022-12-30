@@ -3,6 +3,8 @@ mkdir src/day$1
 
 if [ $? -ne 0 ] ; then
   echo "Day already exists!"
+  code src/day$1/day$1.data.ts src/day$1/day$1.ts src/day$1/day$1.test.ts
+  yarn test day$1
   exit
 fi
 
