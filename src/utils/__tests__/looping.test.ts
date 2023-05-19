@@ -16,4 +16,7 @@ describe('range', () => {
   it('should produce an empty array if 0', () => {
     expect(range(0)).toEqual([]);
   });
+  it('should produce an array of 1 if 1', () => {
+    expect(range(1)).toEqual([0]);
+  });
 });
