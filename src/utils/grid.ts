@@ -33,8 +33,8 @@ export const diagonalDirections = [
 
 export class Grid<ValueType> {
   private gridMap: GridMap<ValueType>;
-  private numRows: number;
-  private numCols: number;
+  public numRows: number;
+  public numCols: number;
   private looping: boolean;
 
   public constructor(
@@ -59,6 +59,7 @@ export class Grid<ValueType> {
     const { x, y } = coords;
     const sx = this.looping ? (x + this.numRows) % this.numRows : x;
     const sy = this.looping ? (y + this.numCols) % this.numCols : y;
+    if (!this.isCoordValid({ x: sx, y: sy })) return undefined;
     return this.gridMap[sx][sy];
   };
 
@@ -66,7 +67,7 @@ export class Grid<ValueType> {
     const { x, y } = coords;
     const sx = this.looping ? (x + this.numRows) % this.numRows : x;
     const sy = this.looping ? (y + this.numCols) % this.numCols : y;
-    this.gridMap[sx][sy] = value;
+    if (this.isCoordValid({ x: sx, y: sy })) this.gridMap[sx][sy] = value;
   };
 
   public runSettingFn = (

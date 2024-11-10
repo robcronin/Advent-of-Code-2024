@@ -13,6 +13,13 @@ export type ExpandingGrid<ValueType> = Record<
   Record<number, ValueType>
 >;
 
+export type Dimensions = {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+};
+
 export const directions = [
   [0, 1],
   [1, 0],
@@ -91,7 +98,7 @@ export const getNeighbourExpandingCoords = (
 
 export const getExpandingDimensions = <ValueType>(
   expandingGrid: ExpandingGrid<ValueType>,
-) => {
+): Dimensions => {
   const minX = Object.keys(expandingGrid).reduce(
     (min, x) => Math.min(min, +x),
     0,
