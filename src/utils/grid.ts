@@ -59,7 +59,6 @@ export class Grid<ValueType> {
     const { x, y } = coords;
     const sx = this.looping ? (x + this.numRows) % this.numRows : x;
     const sy = this.looping ? (y + this.numCols) % this.numCols : y;
-    if (!this.isCoordValid({ x: sx, y: sy })) return undefined;
     return this.gridMap[sx][sy];
   };
 
@@ -67,7 +66,7 @@ export class Grid<ValueType> {
     const { x, y } = coords;
     const sx = this.looping ? (x + this.numRows) % this.numRows : x;
     const sy = this.looping ? (y + this.numCols) % this.numCols : y;
-    if (this.isCoordValid({ x: sx, y: sy })) this.gridMap[sx][sy] = value;
+    this.gridMap[sx][sy] = value;
   };
 
   public runSettingFn = (
@@ -141,7 +140,11 @@ export class Grid<ValueType> {
     };
   };
 
-  public getNeighbours = (coords: Coords, isDiagonal?: boolean): Coords[] => {
+  public getNeighbours = (
+    coords: Coords,
+    isDiagonal?: boolean,
+    doNotValidate?: boolean,
+  ): Coords[] => {
     const { x, y } = coords;
     const deltas = isDiagonal
       ? directions.concat(diagonalDirections)
@@ -150,7 +153,8 @@ export class Grid<ValueType> {
       const neighbour = { x: x + dx, y: y + dy };
       if (this.looping) return [...neighbours, this.loopCoords(neighbour)];
       else {
-        if (this.isCoordValid(neighbour)) return [...neighbours, neighbour];
+        if (this.isCoordValid(neighbour) || doNotValidate)
+          return [...neighbours, neighbour];
         return neighbours;
       }
     }, []);
@@ -168,6 +172,18 @@ export class Grid<ValueType> {
     );
   };
 
+  public sumValuesInGrid = (): number => {
+    return range(this.numRows).reduce(
+      (sumTotal, x) =>
+        sumTotal +
+        range(this.numCols).reduce(
+          (sumRow, y) => (this.get({ x, y }) as number) + sumRow,
+          0,
+        ),
+      0,
+    );
+  };
+
   public findValueInGrid = (value: ValueType): Coords[] => {
     const coords: Coords[] = [];
     range(this.numRows).forEach((x) => {
@@ -179,6 +195,8 @@ export class Grid<ValueType> {
     });
     return coords;
   };
+
+  public setLooping = (isLooping: boolean) => (this.looping = isLooping);
 }
 
 export const createGridFromInput = (input: string[]) => {
