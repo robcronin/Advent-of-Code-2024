@@ -1,8 +1,6 @@
-# 🎄 Advent of Code 202x - Typescript 🎄
+# 🎄 Advent of Code 2024 - Typescript 🎄
 
-Attempt at [Advent Of Code 202x](https://adventofcode.com/202x) written in Typescript with the following aims:
-
-- ...
+Attempt at [Advent Of Code 2024](https://adventofcode.com/2024) written in Typescript
 
 ---
 
