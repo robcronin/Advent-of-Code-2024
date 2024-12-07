@@ -210,3 +210,9 @@ export const createNumberGridFromInput = (input: number[]) => {
   grid.runSettingFn(({ coords: { x, y } }) => +input[x].toString()[y]);
   return grid;
 };
+
+export const getCoordKey = (coords: Coords) => `${coords.x},${coords.y}`;
+export const decodeCoordKey = (key: string): Coords => {
+  const [x, y] = key.split(',').map(Number);
+  return { x, y };
+};
