@@ -47,3 +47,38 @@ export const getUniqueOns = (
 
   return perms;
 };
+
+export const getCombinations = (
+  options: string[],
+  length: number,
+): string[][] => {
+  if (options.length === 1) return [range(length).map(() => options[0])];
+  const combos: string[][] = [];
+  const repeater = options[0];
+  const remainingOptions = options.slice(1);
+  range(0, length + 1).forEach((numRepeats) => {
+    const endCombos = getCombinations(remainingOptions, length - numRepeats);
+    const startCombo = range(numRepeats).map(() => repeater);
+    endCombos.forEach((endCombo) => {
+      combos.push([...startCombo, ...endCombo]);
+    });
+  });
+  return combos;
+};
+
+export const getPermutedCombinations = (options: string[], length: number) => {
+  const combos = getCombinations(options, length);
+  const addedKeys = new Set<string>();
+  const permutedCombos: string[][] = [];
+  combos.forEach((combo) => {
+    const perms = getPermutations(combo);
+    perms.forEach((perm) => {
+      const key = perm.join('');
+      if (!addedKeys.has(key)) {
+        addedKeys.add(key);
+        permutedCombos.push(perm);
+      }
+    });
+  });
+  return permutedCombos;
+};
