@@ -41,7 +41,7 @@ describe('day $1 part 2', () => {
     expect(day$1part2(testData)).toBe($1);
   });
 
-  it('answer', () => {
+  it.skip('answer', () => {
     const answer = day$1part2(data);
     logAnswer(answer, $1, 2);
     expect(answer).toBe($1);
