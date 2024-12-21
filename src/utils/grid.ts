@@ -216,3 +216,6 @@ export const decodeCoordKey = (key: string): Coords => {
   const [x, y] = key.split(',').map(Number);
   return { x, y };
 };
+
+export const isCoordsEqual = (a: Coords, b: Coords) =>
+  a.x === b.x && a.y === b.y;
