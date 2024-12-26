@@ -95,15 +95,19 @@ export class Grid<ValueType> {
     return newGrid;
   };
 
-  public print = (noLog?: boolean): string => {
+  public print = (noLog?: boolean, isAxis?: boolean): string => {
+    const topAxe =
+      range(this.numCols).reduce((acc, num) => acc + (num % 10) + ' ', '  ') +
+      '\n';
     const printString = range(this.numRows).reduce(
       (printValue, x) =>
         printValue +
+        (isAxis ? `${x % 10} ` : '') +
         range(this.numCols)
           .reduce((row, y) => row + this.get({ x, y }) + ' ', '')
           .slice(0, -1) +
         '\n',
-      '',
+      isAxis ? topAxe : '',
     );
     if (!noLog) console.log(printString);
     return printString;
