@@ -818,11 +818,11 @@ const generateWires = (x: number, y: number) => {
 };
 
 type Pair2 = {
-  i1: number;
+  i1?: number;
   i2?: number;
   i3?: number;
   i4?: number;
-  j1: number;
+  j1?: number;
   j2?: number;
   j3?: number;
   j4?: number;
@@ -844,26 +844,46 @@ const swapAllPairs = (gates: Gate[], pair: Pair2) => {
   }
 };
 
-const generatePair = (i1: number, j1: number): Pair2 => ({ i1, j1 });
+const generatePair = (pair: Pair2, i: number, j: number): Pair2 => {
+  const newPair = { ...pair };
+  for (let n = 1; n <= 4; n++) {
+    const iKey = `i${n}` as keyof Pair2;
+    const jKey = `j${n}` as keyof Pair2;
+    if (pair[iKey] === undefined) {
+      newPair[iKey] = i;
+      newPair[jKey] = j;
+      return newPair;
+    }
+  }
+  throw new Error('uh oh');
+};
 
 export const day24part2v3 = (input: string[]) => {
   const { wires, gates } = parseWiresAndGates(input);
-  const pairs: Pair2[] = [];
+  let pairs: Pair2[] = [{}];
   for (let pow = 0; pow < 45; pow++) {
     const newW = generateWires(2 ** pow - 1, 1);
     const startDiff = getFirstDiff(newW, gates);
     if (startDiff - pow !== 1) {
-      for (let i = 0; i < gates.length; i++) {
-        for (let j = i + 1; j < gates.length; j++) {
-          swapGates(gates, i, j);
-          const newDiff = getFirstDiff(wires, gates);
-          if (newDiff > startDiff) {
-            pairs.push(generatePair(i, j));
+      const newPairs: Pair2[] = [];
+      pairs.forEach((pair, index) => {
+        console.log('checking', index, 'of', pairs.length);
+        swapAllPairs(gates, pair);
+        for (let i = 0; i < gates.length; i++) {
+          for (let j = i + 1; j < gates.length; j++) {
+            swapGates(gates, i, j);
+            const newDiff = getFirstDiff(wires, gates);
+            swapGates(gates, i, j);
+            if (newDiff > startDiff) {
+              newPairs.push(generatePair(pair, i, j));
+            }
           }
-          swapGates(gates, i, j);
         }
-      }
-      break;
+        swapAllPairs(gates, pair);
+      });
+      pairs = newPairs;
+      console.log({ pow, len: pairs.length });
+      // break;
     }
   }
   console.log(pairs.length);
