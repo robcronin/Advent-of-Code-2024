@@ -1,5 +1,5 @@
 import { logAnswer } from '../utils/logging';
-import { day24, day24part2, day24part2v2 } from './day24';
+import { day24, day24part2, day24part2v2, day24part2v3 } from './day24';
 import { data, testData, testData2 } from './day24.data';
 
 describe('day 24', () => {
@@ -24,8 +24,13 @@ describe('day 24 part 2', () => {
     expect(answer).toBe(24);
   });
 
-  it.only('answer', () => {
+  it('answer', () => {
     const answer = day24part2v2(data);
+    logAnswer(answer, 24, 2);
+    expect(answer).toBe(24);
+  });
+  it.only('answer', () => {
+    const answer = day24part2v3(data);
     logAnswer(answer, 24, 2);
     expect(answer).toBe(24);
   });

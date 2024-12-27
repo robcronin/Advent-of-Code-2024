@@ -793,3 +793,79 @@ export const day24part2v2 = (input: string[]) => {
 //     [ [ 1, 66, 18, 10 ] ]
 // [[30, 94, 18, 34]];
 //    [ [ 30, 94, 18, 111 ] ]
+
+const getWireKey = (name: string, num: number) =>
+  `${name}${num < 10 ? '0' : ''}${num}`;
+
+const generateWires = (x: number, y: number) => {
+  const xb = x.toString(2);
+  const yb = y.toString(2);
+  const wires: Wires = range(45).reduce(
+    (acc, i) => ({
+      ...acc,
+      [getWireKey('x', i)]: 0,
+      [getWireKey('y', i)]: 0,
+    }),
+    {},
+  );
+  [...xb].reverse().forEach((num, i) => {
+    wires[getWireKey('x', i)] = +num as 0 | 1;
+  });
+  [...yb].reverse().forEach((num, i) => {
+    wires[getWireKey('y', i)] = +num as 0 | 1;
+  });
+  return wires;
+};
+
+type Pair2 = {
+  i1: number;
+  i2?: number;
+  i3?: number;
+  i4?: number;
+  j1: number;
+  j2?: number;
+  j3?: number;
+  j4?: number;
+};
+
+const swapGates = (gates: Gate[], i: number, j: number) => {
+  const temp = gates[i].output;
+  gates[i].output = gates[j].output;
+  gates[j].output = temp;
+};
+
+const swapAllPairs = (gates: Gate[], pair: Pair2) => {
+  for (let n = 1; n <= 4; n++) {
+    const i = pair[`i${n}` as keyof Pair2];
+    const j = pair[`j${n}` as keyof Pair2];
+    if (i !== undefined && j !== undefined) {
+      swapGates(gates, i, j);
+    }
+  }
+};
+
+const generatePair = (i1: number, j1: number): Pair2 => ({ i1, j1 });
+
+export const day24part2v3 = (input: string[]) => {
+  const { wires, gates } = parseWiresAndGates(input);
+  const pairs: Pair2[] = [];
+  for (let pow = 0; pow < 45; pow++) {
+    const newW = generateWires(2 ** pow - 1, 1);
+    const startDiff = getFirstDiff(newW, gates);
+    if (startDiff - pow !== 1) {
+      for (let i = 0; i < gates.length; i++) {
+        for (let j = i + 1; j < gates.length; j++) {
+          swapGates(gates, i, j);
+          const newDiff = getFirstDiff(wires, gates);
+          if (newDiff > startDiff) {
+            pairs.push(generatePair(i, j));
+          }
+          swapGates(gates, i, j);
+        }
+      }
+      break;
+    }
+  }
+  console.log(pairs.length);
+  // runGates(wires, gates);
+};
