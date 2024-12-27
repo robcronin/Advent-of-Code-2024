@@ -141,20 +141,8 @@ export const day24part2 = (input: string[]) => {
   // console.log({ x, y, z });
   // console.log({ xb: '0 ' + xb, yb: '0 ' + yb, zb });
 
-  // // actual
+  // actual first pairs
   // const firstPairs = getPairs(wires, gates);
-  // const secondPairs: Pairs = [];
-  // firstPairs.forEach(([i, j]) => {
-  //   const temp = gates[i].output;
-  //   gates[i].output = gates[j].output;
-  //   gates[j].output = temp;
-  //   const internal = getPairs(wires, gates);
-  //   gates[j].output = gates[i].output;
-  //   gates[i].output = temp;
-  //   secondPairs.push(...internal);
-  // });
-  // console.log(secondPairs);
-
   const firstPairs = [
     [1, 66, 18],
     [30, 66, 18],
@@ -168,6 +156,24 @@ export const day24part2 = (input: string[]) => {
     [137, 152, 18],
     [137, 169, 18],
   ];
+
+  // actual second pairs
+  // const secondPairsSet = new Set<string>();
+  // firstPairs.forEach(([i, j]) => {
+  //   const temp = gates[i].output;
+  //   gates[i].output = gates[j].output;
+  //   gates[j].output = temp;
+  //   const internal = getPairs(wires, gates);
+  //   gates[j].output = gates[i].output;
+  //   gates[i].output = temp;
+  //   internal.forEach((i, j, num) => secondPairsSet.add(`${i},${j},${num}`));
+  // });
+  // const secondPairs = [...secondPairsSet].forEach((line) => {
+  //   const [i, j, num] = line.split(',');
+  //   return [+i, +j, +num];
+  // });
+  // console.log(secondPairs);
+
   const secondPairs = [
     [81, 136, 22],
     [108, 136, 22],
@@ -175,30 +181,35 @@ export const day24part2 = (input: string[]) => {
     [136, 174, 22],
   ];
 
-  // const thirdPairs: Pairs = [];
-  // firstPairs.forEach(([i, j]) => {
-  //   const temp = gates[i].output;
-  //   gates[i].output = gates[j].output;
-  //   gates[j].output = temp;
+  // actual third pairs
+  const thirdPairsSet = new Set<string>();
+  firstPairs.forEach(([i, j]) => {
+    const temp = gates[i].output;
+    gates[i].output = gates[j].output;
+    gates[j].output = temp;
 
-  //   secondPairs.forEach(([i2, j2]) => {
-  //     const temp2 = gates[i2].output;
-  //     gates[i2].output = gates[j2].output;
-  //     gates[j2].output = temp2;
+    secondPairs.forEach(([i2, j2]) => {
+      const temp2 = gates[i2].output;
+      gates[i2].output = gates[j2].output;
+      gates[j2].output = temp2;
 
-  //     const internal2 = getPairs(wires, gates);
-  //     thirdPairs.push(...internal2);
+      const internal2 = getPairs(wires, gates);
+      internal2.forEach((i, j, num) => thirdPairsSet.add(`${i},${j},${num}`));
 
-  //     gates[j2].output = gates[i2].output;
-  //     gates[i2].output = temp2;
-  //   });
+      gates[j2].output = gates[i2].output;
+      gates[i2].output = temp2;
+    });
 
-  //   gates[j].output = gates[i].output;
-  //   gates[i].output = temp;
-  // });
-  // console.log(secondPairs);
+    gates[j].output = gates[i].output;
+    gates[i].output = temp;
+  });
+  const thirdPairs = [...thirdPairsSet].forEach((line) => {
+    const [i, j, num] = line.split(',');
+    return [+i, +j, +num];
+  });
+  console.log(thirdPairs);
 
-  const thirdPairs = [
+  const thirdPairsOld = [
     [8, 20, 25],
     [8, 34, 25],
     [8, 104, 25],
@@ -414,7 +425,7 @@ export const day24part2 = (input: string[]) => {
     [204, 217, -1],
     [204, 219, -1],
   ];
-  const fourthPairs = [
+  const fourthPairsOld2 = [
     [8, 27, -1],
     [14, 168, -1],
     [14, 184, -1],
@@ -440,72 +451,72 @@ export const day24part2 = (input: string[]) => {
   ];
 
   // START HERE
-  console.log(
-    firstPairs.length,
-    secondPairs.length,
-    thirdPairs.length,
-    fourthPairs.length,
-  );
+  // console.log(
+  //   firstPairs.length,
+  //   secondPairs.length,
+  //   thirdPairs.length,
+  //   fourthPairs.length,
+  // );
 
-  let potentials: number[][] = [];
-  firstPairs.forEach(([i1, j1]) => {
-    secondPairs.forEach(([i2, j2]) => {
-      thirdPairs.forEach(([i3, j3]) => {
-        fourthPairs.forEach(([i4, j4]) => {
-          potentials.push([i1, j1, i2, j2, i3, j3, i4, j4]);
-        });
-      });
-    });
-  });
-  console.log(potentials.length);
-  // console.log(xb);
+  // let potentials: number[][] = [];
+  // firstPairs.forEach(([i1, j1]) => {
+  //   secondPairs.forEach(([i2, j2]) => {
+  //     thirdPairs.forEach(([i3, j3]) => {
+  //       fourthPairs.forEach(([i4, j4]) => {
+  //         potentials.push([i1, j1, i2, j2, i3, j3, i4, j4]);
+  //       });
+  //     });
+  //   });
+  // });
+  // console.log(potentials.length);
+  // // console.log(xb);
 
-  while (potentials.length > 1) {
-    console.log('starting', potentials.length);
-    console.log(potentials.slice(0, 10));
-    const newWires = { ...wires };
-    Object.keys(newWires).forEach((wire) => {
-      if (wire.startsWith('x') || wire.startsWith('y')) {
-        newWires[wire] = Math.random() > 0.5 ? 1 : 0;
-      }
-    });
-    const endWires = runGates(newWires, gates);
-    const [xb, x] = getNumber(endWires, 'x');
-    const [yb, y] = getNumber(endWires, 'y');
-    console.log({ xb, yb });
-    potentials = potentials.filter((p, index) => {
-      if (index % 10000 === 0) console.log(index);
-      const [i1, j1, i2, j2, i3, j3, i4, j4] = p;
-      const temp1 = gates[i1].output;
-      gates[i1].output = gates[j1].output;
-      gates[j1].output = temp1;
-      const temp2 = gates[i2].output;
-      gates[i2].output = gates[j2].output;
-      gates[j2].output = temp2;
-      const temp3 = gates[i3].output;
-      gates[i3].output = gates[j3].output;
-      gates[j3].output = temp3;
-      const temp4 = gates[i4].output;
-      gates[i4].output = gates[j4].output;
-      gates[j4].output = temp4;
+  // while (potentials.length > 1) {
+  //   console.log('starting', potentials.length);
+  //   console.log(potentials.slice(0, 10));
+  //   const newWires = { ...wires };
+  //   Object.keys(newWires).forEach((wire) => {
+  //     if (wire.startsWith('x') || wire.startsWith('y')) {
+  //       newWires[wire] = Math.random() > 0.5 ? 1 : 0;
+  //     }
+  //   });
+  //   const endWires = runGates(newWires, gates);
+  //   const [xb, x] = getNumber(endWires, 'x');
+  //   const [yb, y] = getNumber(endWires, 'y');
+  //   console.log({ xb, yb });
+  //   potentials = potentials.filter((p, index) => {
+  //     if (index % 10000 === 0) console.log(index);
+  //     const [i1, j1, i2, j2, i3, j3, i4, j4] = p;
+  //     const temp1 = gates[i1].output;
+  //     gates[i1].output = gates[j1].output;
+  //     gates[j1].output = temp1;
+  //     const temp2 = gates[i2].output;
+  //     gates[i2].output = gates[j2].output;
+  //     gates[j2].output = temp2;
+  //     const temp3 = gates[i3].output;
+  //     gates[i3].output = gates[j3].output;
+  //     gates[j3].output = temp3;
+  //     const temp4 = gates[i4].output;
+  //     gates[i4].output = gates[j4].output;
+  //     gates[j4].output = temp4;
 
-      const diff = getFirstDiff(newWires, gates);
+  //     const diff = getFirstDiff(newWires, gates);
 
-      gates[j1].output = gates[i1].output;
-      gates[i1].output = temp1;
-      gates[j2].output = gates[i2].output;
-      gates[i2].output = temp2;
-      gates[j3].output = gates[i3].output;
-      gates[i3].output = temp3;
-      gates[j4].output = gates[i4].output;
-      gates[i4].output = temp4;
+  //     gates[j1].output = gates[i1].output;
+  //     gates[i1].output = temp1;
+  //     gates[j2].output = gates[i2].output;
+  //     gates[i2].output = temp2;
+  //     gates[j3].output = gates[i3].output;
+  //     gates[i3].output = temp3;
+  //     gates[j4].output = gates[i4].output;
+  //     gates[i4].output = temp4;
 
-      if (diff === -1) {
-        // console.log(p);
-        return true;
-      }
-    });
-  }
+  //     if (diff === -1) {
+  //       // console.log(p);
+  //       return true;
+  //     }
+  //   });
+  // }
 
-  return potentials;
+  // return potentials;
 };
