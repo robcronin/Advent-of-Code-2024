@@ -92,7 +92,7 @@ const getFirstDiff = (wires: Wires, gates: Gate[]) => {
   const diffIndex = range(zb.length).find(
     (i) => zb[zb.length - i - 1] !== actualZb[actualZb.length - i - 1],
   );
-  return diffIndex === undefined ? -1 : diffIndex;
+  return diffIndex === undefined ? Number.MAX_SAFE_INTEGER : diffIndex;
 };
 
 type Pairs = [number, number, number][];
@@ -860,32 +860,50 @@ const generatePair = (pair: Pair2, i: number, j: number): Pair2 => {
 
 export const day24part2v3 = (input: string[]) => {
   const { wires, gates } = parseWiresAndGates(input);
-  let pairs: Pair2[] = [{}];
-  for (let pow = 0; pow < 45; pow++) {
-    const newW = generateWires(2 ** pow - 1, 1);
+
+  // get first diff
+  let pow = 0;
+  for (let p = 0; p < 45; p++) {
+    const newW = generateWires(2 ** p - 1, 1);
     const startDiff = getFirstDiff(newW, gates);
-    if (startDiff - pow !== 1) {
-      const newPairs: Pair2[] = [];
-      pairs.forEach((pair, index) => {
-        console.log('checking', index, 'of', pairs.length);
-        swapAllPairs(gates, pair);
-        for (let i = 0; i < gates.length; i++) {
-          for (let j = i + 1; j < gates.length; j++) {
-            swapGates(gates, i, j);
-            const newDiff = getFirstDiff(wires, gates);
-            swapGates(gates, i, j);
-            if (newDiff > startDiff) {
-              newPairs.push(generatePair(pair, i, j));
-            }
-          }
-        }
-        swapAllPairs(gates, pair);
-      });
-      pairs = newPairs;
-      console.log({ pow, len: pairs.length });
-      // break;
+    if (startDiff - p !== 1) {
+      pow = p;
+      break;
     }
   }
-  console.log(pairs.length);
+  console.log({ pow });
+
+  let pairs: Pair2[] = [{}];
+  while (true) {
+    const newW = generateWires(2 ** 45 - 1, 1);
+    const newW2 = generateWires(2 ** 45 - 1, 0);
+    let newPairs: Pair2[] = [];
+    let max = 0;
+    pairs.forEach((pair, index) => {
+      console.log('pow:', pow, 'checking', index, 'of', pairs.length);
+      if (pow > 22) console.log(pow, max, newPairs);
+      swapAllPairs(gates, pair);
+      const startDiff = getFirstDiff(newW, gates);
+      for (let i = 0; i < gates.length; i++) {
+        for (let j = i + 1; j < gates.length; j++) {
+          swapGates(gates, i, j);
+          const newDiff = getFirstDiff(wires, gates);
+          swapGates(gates, i, j);
+          if (newDiff > startDiff) {
+            if (newDiff > max) {
+              newPairs = [generatePair(pair, i, j)];
+              max = newDiff;
+            } else if (newDiff === max) newPairs.push(generatePair(pair, i, j));
+          }
+        }
+      }
+      swapAllPairs(gates, pair);
+      // break;
+    });
+    pairs = newPairs;
+    pow = max;
+    console.log(pairs);
+    console.log({ pow, len: pairs.length });
+  }
   // runGates(wires, gates);
 };
