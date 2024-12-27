@@ -13,7 +13,6 @@ type Gate = {
   a: string;
   b: string;
   output: string;
-  isOutputted: boolean;
 };
 
 const parseWiresAndGates = (
@@ -31,20 +30,23 @@ const parseWiresAndGates = (
     );
     if (!groups) throw new Error(`Can't parse ${line}`);
     const [_, a, type, b, output] = groups;
-    return { a, b, output, type: type as GateType, isOutputted: false };
+    return { a, b, output, type: type as GateType };
   });
   return { wires, gates };
 };
 
-const runGates = (wires: Wires, gates: Gate[]) => {
+const runGates = (inputWires: Wires, gates: Gate[]): Wires => {
   let numOutputted = 0;
-  while (numOutputted < gates.length) {
+  const wires = { ...inputWires };
+  let numChanged = 1;
+  while (numOutputted < gates.length && numChanged !== 0) {
+    numChanged = 0;
     for (const gate of gates) {
-      if (gate.isOutputted) continue;
+      if (wires[gate.output] !== undefined) continue;
       const { a, b, type, output } = gate;
       if (wires[a] !== undefined && wires[b] !== undefined) {
-        gate.isOutputted = true;
         numOutputted++;
+        numChanged++;
         if (type === GateType.AND) {
           if (wires[a] === 1 && wires[b] === 1) wires[output] = 1;
           else wires[output] = 0;
@@ -58,25 +60,73 @@ const runGates = (wires: Wires, gates: Gate[]) => {
       }
     }
   }
+  return wires;
 };
 
-const getZ = (wires: Wires) => {
+const getNumber = (wires: Wires, wireName: string): [string, number] => {
   const wireNames = Object.keys(wires);
-  const numZ = countArr(wireNames, (w) => w.startsWith('z'));
-  let ans = 0;
+  const numZ = countArr(wireNames, (w) => w.startsWith(wireName));
+  let decimal = 0;
+  let binary = '';
   range(numZ).forEach((i) => {
-    const bit = wires[`z${i < 10 ? '0' : ''}${i}`];
-    if (bit === 1) ans += 2 ** i;
+    const bit = wires[`${wireName}${i < 10 ? '0' : ''}${i}`];
+    if (bit === 1) decimal += 2 ** i;
+    // binary = bit + ' ' + binary;
+    binary = bit + binary;
   });
-  return ans;
+  return [binary, decimal];
 };
 
 export const day24 = (input: string[]) => {
   const { wires, gates } = parseWiresAndGates(input);
-  runGates(wires, gates);
-  return getZ(wires);
+  const endWires = runGates(wires, gates);
+  return getNumber(endWires, 'z')[1];
+};
+
+const getFirstDiff = (wires: Wires, gates: Gate[]) => {
+  const endWires = runGates(wires, gates);
+  const [xb, x] = getNumber(endWires, 'x');
+  const [yb, y] = getNumber(endWires, 'y');
+  const [zb, z] = getNumber(endWires, 'z');
+  const actualZb = (x + y).toString(2);
+  const diffIndex = range(zb.length).find(
+    (i) => zb[zb.length - i - 1] !== actualZb[actualZb.length - i - 1],
+  );
+  return diffIndex || -1;
 };
 
 export const day24part2 = (input: string[]) => {
+  const { wires, gates } = parseWiresAndGates(input);
+  runGates(wires, gates);
+  console.log({ numGates: gates.length });
+
+  const [xb, x] = getNumber(wires, 'x');
+  const [yb, y] = getNumber(wires, 'y');
+  const [zb, z] = getNumber(wires, 'z');
+
+  const actualZb = (x + y).toString(2);
+
+  const diffIndex = getFirstDiff(wires, gates);
+  console.log({ diffIndex });
+
+  console.log({ x, y, z });
+  console.log({ xb: '0 ' + xb, yb: '0 ' + yb, zb });
+
+  const pairs: [number, number, number][] = [];
+  for (let i = 0; i < gates.length; i++) {
+    for (let j = i + 1; j < gates.length; j++) {
+      const temp = gates[i].output;
+      gates[i].output = gates[j].output;
+      gates[j].output = temp;
+      const newDiff = getFirstDiff(wires, gates);
+      if (newDiff > diffIndex + 1) {
+        pairs.push([i, j, newDiff]);
+      }
+      gates[j].output = gates[i].output;
+      gates[i].output = temp;
+    }
+  }
+  console.log(pairs);
+
   return 24;
 };
